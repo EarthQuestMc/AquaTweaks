@@ -127,10 +127,16 @@ public class FluidUtils
 	}
 	public static float getFluidHeight(IBlockAccess world, int x, int y, int z, Material mat)
 	{
+		return getFluidHeight(world, x, y, z, mat, 0);
+	}
+	private static float getFluidHeight(IBlockAccess world, int x, int y, int z, Material mat, int depth)
+	{
+		if(depth > 4)
+			return 0f;
 		int l = 0;
 		float f = 0.0F;
 
-		if(canConnectAquaConnectable(world, x,y+1,z, 0) && (getFluidHeight(world,x,y+1,z,mat)>0||getFluidHeight(world,x+1,y+1,z,mat)>0||getFluidHeight(world,x+1,y+1,z+1,mat)>0||getFluidHeight(world,x,y+1,z+1,mat)>0))
+		if(canConnectAquaConnectable(world, x,y+1,z, 0) && (getFluidHeight(world,x,y+1,z,mat,depth+1)>0||getFluidHeight(world,x+1,y+1,z,mat,depth+1)>0||getFluidHeight(world,x+1,y+1,z+1,mat,depth+1)>0||getFluidHeight(world,x,y+1,z+1,mat,depth+1)>0))
 			return 1f;
 		for(int i1 = 0; i1 < 4; ++i1)
 		{
@@ -139,7 +145,7 @@ public class FluidUtils
 
 			if (world.getBlock(j1, y + 1, k1).getMaterial()==mat)
 				return 1F;
-			if(canConnectAquaConnectable(world, j1,y+1,k1, 0) && (getFluidHeight(world,j1,y+1,k1,mat)>0||getFluidHeight(world,j1+1,y+1,k1,mat)>0||getFluidHeight(world,j1+1,y+1,k1+1,mat)>0||getFluidHeight(world,j1,y+1,k1+1,mat)>0))
+			if(canConnectAquaConnectable(world, j1,y+1,k1, 0) && (getFluidHeight(world,j1,y+1,k1,mat,depth+1)>0||getFluidHeight(world,j1+1,y+1,k1,mat,depth+1)>0||getFluidHeight(world,j1+1,y+1,k1+1,mat,depth+1)>0||getFluidHeight(world,j1,y+1,k1+1,mat,depth+1)>0))
 				return 1f;
 
 			Material material1 = world.getBlock(j1, y, k1).getMaterial();
