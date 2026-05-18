@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
             name = "sonatype"
@@ -18,55 +18,61 @@ buildscript {
 apply plugin: 'forge'
 
 version = "1.0"
-group= "blusunrize"
+group = "blusunrize"
 archivesBaseName = "AquaTweaks-1.7.10"
 
 minecraft {
     version = "1.7.10-10.13.4.1448-1.7.10"
-	replace '${version}', project.version
+    replace '${version}', project.version
     assetDir = "eclipse/assets"
 }
+
 jar {
-        manifest{
+    manifest {
         attributes 'FMLCorePlugin': 'blusunrize.aquatweaks.core.AquaTweaksCoreLoader',
                    'FMLCorePluginContainsFMLMod': 'false'
     }
 }
 
-dependencies {
-
-}
-
-processResources
-{
+processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    from(sourceSets.main.resources.srcDirs)
-    {
+    from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
-    from(sourceSets.main.resources.srcDirs)
-    {
+
+    from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 }
 
 task deobfJar(type: Jar) {
-	from sourceSets.main.output
-	classifier = 'deobf'
+    from sourceSets.main.output
+    classifier = 'deobf'
 }
 
 task apiZip(type: Zip) {
-	from(sourceSets.main.java) {
-		include "blusunrize/aquatweaks/api/**"
-		}	
-	classifier = 'api'
+    from(sourceSets.main.java) {
+        include "blusunrize/aquatweaks/api/**"
+    }
+    classifier = 'api'
 }
 
 artifacts {
-	archives deobfJar
-	archives apiZip
+    archives deobfJar
+    archives apiZip
+}
+
+gradle.taskGraph.whenReady { graph ->
+    if (graph.hasTask(':downloadClient')) {
+        downloadClient.enabled = false
+    }
+    if (graph.hasTask(':downloadServer')) {
+        downloadServer.enabled = false
+    }
+    if (graph.hasTask(':getVersionJson')) {
+        getVersionJson.enabled = false
+    }
 }
